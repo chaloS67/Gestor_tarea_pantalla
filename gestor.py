@@ -1,4 +1,4 @@
-import os
+import os,json
 
 def limpiar_pantalla():
        os.system("clear")
@@ -26,9 +26,22 @@ def pedir_opcion():
 def agregar_tarea(tareas):
         nueva_tarea = definir_tarea(tareas)
         tareas.append(nueva_tarea)
+        guardar_tareas(tareas)
         print("\n TAREA AGREGADA CON EXITO \n")
-        return(tareas)
+   
+def guardar_tareas(tareas):
+       with open ("tareas.json", "w") as archivo:
+              json.dump(tareas,archivo , indent=4)
 
+def cargar_tareas():
+       try:
+                with open ("tareas.json","r") as archivo:        
+                        
+                        tareas = json.load(archivo)   
+                        return tareas
+       except:
+              
+              return[]
 
 def definir_tarea(tarea):
       titulo = input ("ingresar titulo de la tarea ")
@@ -77,6 +90,7 @@ def eliminar_tarea(tareas):
        numero = int (input("eliga el numero de tarea a eliminar"))
        tarea = buscar_tarea(tareas,numero)
        
+       
        if tarea is None:
                 
                 print("Tarea no encontrada")
@@ -93,8 +107,10 @@ def eliminar_tarea(tareas):
        if confirmacion == "1":
               tareas.remove(tarea)
               print ("TAREA ELIMINADA")
+              guardar_tareas(tareas)
        else:
               print ("ELIMINACION CANCELADA")
+
 
 def completar_tarea(tareas):
        ver_tareas (tareas)
@@ -115,14 +131,15 @@ def completar_tarea(tareas):
        if confirmacion == "1":
               tarea["estado"] = "completado"
               print ("TAREA COMPLETADA")
+              guardar_tareas(tareas)
        else:
               print ("ACCION CANCELADA")
        
        
        
 def main ():
-    
-        tareas = []
+
+        tareas = cargar_tareas()
         
         while True:
                 limpiar_pantalla()
